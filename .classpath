@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Exemplos de uso de cifra de bloco (Java)-20201114"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
