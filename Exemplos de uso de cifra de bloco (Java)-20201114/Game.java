@@ -42,9 +42,9 @@ public class Game {
 		
 		// Passo 2
 		//B recebido do professor
-	//	String B_hexadecimal = "00ABBD2BCCB8CFF59B9F10D7F785519ED3AA0E68D00CEBCE587C8ED93A605913B9572418BFDE3D26E1365C75E6040880D880B2960F92597ECC57DED31932AA2099132998A461DE381AAD88A825D1167F89254C828198516F10923CF45986015C6EC9CD43D476D2556BAB70A5204E349EB3ACA232D83397C1EFCD0D452978060D81";
+		String B_hexadecimal = "00ABBD2BCCB8CFF59B9F10D7F785519ED3AA0E68D00CEBCE587C8ED93A605913B9572418BFDE3D26E1365C75E6040880D880B2960F92597ECC57DED31932AA2099132998A461DE381AAD88A825D1167F89254C828198516F10923CF45986015C6EC9CD43D476D2556BAB70A5204E349EB3ACA232D83397C1EFCD0D452978060D81";
 		//Eduardo
-		String B_hexadecimal ="3786ab2e45fee25bf5aeeab471f0f4577da9e82bdd93c9288c012a72b247f0827e7176abbe5becb5995452503f847435d4dc41d37cece0d9458946309a349ebc443e0c915662fe1d78e8c2227baa7e76cfe1170664baa1b721fb393d57cb5a61e4afa013e45cdeb813bfe24995720192bf70a14842ddfd78cf1d87a2f49ce474";
+	//	String B_hexadecimal ="3786ab2e45fee25bf5aeeab471f0f4577da9e82bdd93c9288c012a72b247f0827e7176abbe5becb5995452503f847435d4dc41d37cece0d9458946309a349ebc443e0c915662fe1d78e8c2227baa7e76cfe1170664baa1b721fb393d57cb5a61e4afa013e45cdeb813bfe24995720192bf70a14842ddfd78cf1d87a2f49ce474";
 		BigInteger B = new BigInteger(B_hexadecimal, 16);
 		BigInteger V = B.modPow(a, p);
 
@@ -68,9 +68,9 @@ public class Game {
 		// Etapa 2
 		// Recebimento da mensagem
 		//Professor
-	//	String mensagemprofessor_hex = "582FF060EA980234D69F725492BCFBF7BD9F763637704FCB100BD8E441ACF42E5907440BCAE4EB342C8CB267CF9E0BC920DE29B93F8E72540FE4DE7401389D9007E5DEF13F251F77D7A72B8C58B0F768A6B00B1F360EB767F0F7C07794CC2DABEB3B8F338BA1412A9C46DB622CAA8683";
+		String mensagemprofessor_hex = "582FF060EA980234D69F725492BCFBF7BD9F763637704FCB100BD8E441ACF42E5907440BCAE4EB342C8CB267CF9E0BC920DE29B93F8E72540FE4DE7401389D9007E5DEF13F251F77D7A72B8C58B0F768A6B00B1F360EB767F0F7C07794CC2DABEB3B8F338BA1412A9C46DB622CAA8683";
 		//Eduardo
-		String mensagemprofessor_hex ="31CCE0E356E19458F94A5049490DCD9B1D66981F71ED43F624E4A2D000248DDD";
+	//	String mensagemprofessor_hex ="31CCE0E356E19458F94A5049490DCD9B1D66981F71ED43F624E4A2D000248DDD";
 		
 		byte[] hash = hexStringToByteArray(mensagemprofessor_hex);
 		IvParameterSpec iv =new IvParameterSpec(Arrays.copyOfRange(hash, 0, 16));
@@ -92,18 +92,36 @@ public class Game {
 		String mensagem_invertida= new StringBuilder(mensagem_textoClaro).reverse().toString();
 		System.out.println(mensagem_invertida);
 		
+		byte[] iv2= new byte[16];
+		new Random().nextBytes(iv2);
+		
+		IvParameterSpec ivfinal = new IvParameterSpec(iv2);
+		
 		 SecretKeySpec skeySpec2 = new SecretKeySpec(senha, "AES");
 
          Cipher cipher2 =Cipher.getInstance("AES/CBC/PKCS5Padding");
 
-         cipher2.init(Cipher.ENCRYPT_MODE, skeySpec2);
+         cipher2.init(Cipher.ENCRYPT_MODE, skeySpec2, ivfinal);
 
          byte[] encrypted = cipher2.doFinal(mensagem_invertida.getBytes());
          
+         encrypted= joinBA( iv2,encrypted);
          System.out.println("encrypted string: " + byteArrayToHexString(encrypted));
 		
 
 	}
+	public static byte[] joinBA(byte[] iv2,byte[] encrypted) {
+		byte[] mensagem_criptografada = new byte[iv2.length+encrypted.length];
+		for (int i=0 ; i<iv2.length;i++) {
+			mensagem_criptografada[i]=iv2[i];
+		}
+		for (int i=0 ; i<encrypted.length;i++) {
+			mensagem_criptografada[i+iv2.length]=encrypted[i];
+		}
+		return mensagem_criptografada;
+	}
+	
+	
 	 public static String byteArrayToHexString(byte[] b)
 	    {
 	        StringBuffer sb = new StringBuffer(b.length * 2);
